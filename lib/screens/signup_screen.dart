@@ -78,7 +78,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     fontFamily: 'serif',
                   ),
                 ),
-                const Text('🦞', style: TextStyle(fontSize: 40)),
+                Image.asset('assets/images/seahorse.png', height: 80),
                 const SizedBox(height: 16),
                 const Text(
                   'Sign up to see photos and videos\nfrom your friends.',

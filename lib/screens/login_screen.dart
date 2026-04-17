@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontFamily: 'serif',
                   ),
                 ),
-                const Text('🦞', style: TextStyle(fontSize: 40)),
+                Image.asset('assets/images/seahorse.png', height: 80),
                 const SizedBox(height: 32),
                 TextFieldInput(
                   textEditingController: _emailController,

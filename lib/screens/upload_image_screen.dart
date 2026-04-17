@@ -45,7 +45,7 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                   ),
                 ),
               ),
-              const Center(child: Text('🦞', style: TextStyle(fontSize: 40))),
+              Center(child: Image.asset('assets/images/seahorse.png', height: 80)),
               const SizedBox(height: 24),
               Text(
                 'Hello, ${widget.username} Welcome to Holbegram.',
