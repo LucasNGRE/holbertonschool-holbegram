@@ -17,6 +17,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
@@ -87,29 +89,43 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 const SizedBox(height: 24),
                 TextFieldInput(
-                  textEditingController: _emailController,
+                  controller: _emailController,
                   hintText: 'Email',
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 12),
                 TextFieldInput(
-                  textEditingController: _usernameController,
+                  controller: _usernameController,
                   hintText: 'Full Name',
                   keyboardType: TextInputType.text,
                 ),
                 const SizedBox(height: 12),
                 TextFieldInput(
-                  textEditingController: _passwordController,
+                  controller: _passwordController,
                   hintText: 'Password',
                   keyboardType: TextInputType.text,
-                  isPass: true,
+                  ispassword: _obscurePassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      color: const Color(0xFFE63946),
+                    ),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextFieldInput(
-                  textEditingController: _confirmPasswordController,
+                  controller: _confirmPasswordController,
                   hintText: 'Confirm Password',
                   keyboardType: TextInputType.text,
-                  isPass: true,
+                  ispassword: _obscureConfirmPassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                      color: const Color(0xFFE63946),
+                    ),
+                    onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(

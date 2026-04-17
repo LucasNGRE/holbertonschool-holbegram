@@ -1,51 +1,44 @@
 import 'package:flutter/material.dart';
 
-class TextFieldInput extends StatefulWidget {
-  final TextEditingController textEditingController;
-  final bool isPass;
+class TextFieldInput extends StatelessWidget {
+  final TextEditingController controller;
+  final bool ispassword;
   final String hintText;
+  final Widget? suffixIcon;
   final TextInputType keyboardType;
 
   const TextFieldInput({
     super.key,
-    required this.textEditingController,
-    this.isPass = false,
+    required this.controller,
+    this.ispassword = false,
     required this.hintText,
+    this.suffixIcon,
     required this.keyboardType,
   });
 
   @override
-  State<TextFieldInput> createState() => _TextFieldInputState();
-}
-
-class _TextFieldInputState extends State<TextFieldInput> {
-  bool _obscure = true;
-
-  @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: widget.textEditingController,
+      keyboardType: keyboardType,
+      controller: controller,
+      cursorColor: const Color.fromARGB(218, 226, 37, 24),
       decoration: InputDecoration(
-        hintText: widget.hintText,
-        filled: true,
-        fillColor: Colors.grey[200],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4),
-          borderSide: BorderSide.none,
+        hintText: hintText,
+        border: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.transparent, style: BorderStyle.none),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        suffixIcon: widget.isPass
-            ? IconButton(
-                icon: Icon(
-                  _obscure ? Icons.visibility_off : Icons.visibility,
-                  color: const Color(0xFFE63946),
-                ),
-                onPressed: () => setState(() => _obscure = !_obscure),
-              )
-            : null,
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.transparent, style: BorderStyle.none),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.transparent, style: BorderStyle.none),
+        ),
+        filled: true,
+        contentPadding: const EdgeInsets.all(8),
+        suffixIcon: suffixIcon,
       ),
-      keyboardType: widget.keyboardType,
-      obscureText: widget.isPass ? _obscure : false,
+      textInputAction: TextInputAction.next,
+      obscureText: ispassword,
     );
   }
 }

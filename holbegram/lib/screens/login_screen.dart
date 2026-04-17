@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -65,16 +66,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 Image.asset('assets/images/seahorse.png', height: 80),
                 const SizedBox(height: 32),
                 TextFieldInput(
-                  textEditingController: _emailController,
+                  controller: _emailController,
                   hintText: 'Email',
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 12),
                 TextFieldInput(
-                  textEditingController: _passwordController,
+                  controller: _passwordController,
                   hintText: 'Password',
                   keyboardType: TextInputType.text,
-                  isPass: true,
+                  ispassword: _obscurePassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      color: const Color(0xFFE63946),
+                    ),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
