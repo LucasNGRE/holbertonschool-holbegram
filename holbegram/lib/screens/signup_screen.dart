@@ -1,176 +1,174 @@
 import 'package:flutter/material.dart';
-import '../resources/auth_methods.dart';
 import '../widgets/text_field.dart';
 import 'login_screen.dart';
-import 'upload_image_screen.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class SignUp extends StatefulWidget {
+  final TextEditingController emailController;
+  final TextEditingController usernameController;
+  final TextEditingController passwordController;
+  final TextEditingController passwordConfirmController;
+
+  const SignUp({
+    super.key,
+    required this.emailController,
+    required this.usernameController,
+    required this.passwordController,
+    required this.passwordConfirmController,
+  });
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  bool _isLoading = false;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+class _SignUpState extends State<SignUp> {
+  late bool _passwordVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = true;
+  }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    _usernameController.dispose();
+    widget.emailController.dispose();
+    widget.usernameController.dispose();
+    widget.passwordController.dispose();
+    widget.passwordConfirmController.dispose();
     super.dispose();
-  }
-
-  Future<void> _signUpUser() async {
-    if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Passwords do not match')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    String res = await AuthMethods().signUpUser(
-      email: _emailController.text,
-      password: _passwordController.text,
-      username: _usernameController.text,
-      bio: '',
-      file: null,
-    );
-    setState(() => _isLoading = false);
-
-    if (!mounted) return;
-    if (res == 'success') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => UploadImageScreen(username: _usernameController.text),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res)));
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 48),
-                const Text(
-                  'Holbegram',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'serif',
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 28),
+            const Text(
+              'Holbegram',
+              style: TextStyle(
+                fontFamily: 'Billabong',
+                fontSize: 50,
+              ),
+            ),
+            Image.asset(
+              'assets/images/logo.webp',
+              width: 80,
+              height: 60,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Sign up to see photos and videos\nfrom your friends.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 28),
+                  TextFieldInput(
+                    controller: widget.emailController,
+                    ispassword: false,
+                    hintText: 'Email',
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                ),
-                Image.asset('assets/images/seahorse.png', height: 80),
-                const SizedBox(height: 16),
-                const Text(
-                  'Sign up to see photos and videos\nfrom your friends.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 24),
-                TextFieldInput(
-                  controller: _emailController,
-                  hintText: 'Email',
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 12),
-                TextFieldInput(
-                  controller: _usernameController,
-                  hintText: 'Full Name',
-                  keyboardType: TextInputType.text,
-                ),
-                const SizedBox(height: 12),
-                TextFieldInput(
-                  controller: _passwordController,
-                  hintText: 'Password',
-                  keyboardType: TextInputType.text,
-                  ispassword: _obscurePassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                      color: const Color(0xFFE63946),
-                    ),
-                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    controller: widget.usernameController,
+                    ispassword: false,
+                    hintText: 'Full Name',
+                    keyboardType: TextInputType.text,
                   ),
-                ),
-                const SizedBox(height: 12),
-                TextFieldInput(
-                  controller: _confirmPasswordController,
-                  hintText: 'Confirm Password',
-                  keyboardType: TextInputType.text,
-                  ispassword: _obscureConfirmPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
-                      color: const Color(0xFFE63946),
-                    ),
-                    onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _signUpUser,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE63946),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    controller: widget.passwordController,
+                    ispassword: !_passwordVisible,
+                    hintText: 'Password',
+                    keyboardType: TextInputType.visiblePassword,
+                    suffixIcon: IconButton(
+                      alignment: Alignment.bottomLeft,
+                      icon: Icon(
+                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: const Color.fromARGB(218, 226, 37, 24),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
                     ),
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Sign up',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Have an account?  '),
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    controller: widget.passwordConfirmController,
+                    ispassword: !_passwordVisible,
+                    hintText: 'Confirm Password',
+                    keyboardType: TextInputType.visiblePassword,
+                    suffixIcon: IconButton(
+                      alignment: Alignment.bottomLeft,
+                      icon: Icon(
+                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: const Color.fromARGB(218, 226, 37, 24),
                       ),
-                      child: const Text(
-                        'Log in',
-                        style: TextStyle(
-                          color: Color(0xFFE63946),
-                          fontWeight: FontWeight.bold,
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  SizedBox(
+                    height: 48,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(
+                          const Color.fromARGB(218, 226, 37, 24),
                         ),
                       ),
+                      onPressed: () {},
+                      child: const Text(
+                        'Sign up',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-              ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Have an account?"),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LoginScreen(
+                                emailController: TextEditingController(),
+                                passwordController: TextEditingController(),
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Log in',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(218, 226, 37, 24),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
