@@ -3,21 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'home_screen.dart';
 
-class UploadImageScreen extends StatefulWidget {
+class AddPicture extends StatefulWidget {
+  final String email;
+  final String password;
   final String username;
 
-  const UploadImageScreen({super.key, required this.username});
+  const AddPicture({
+    super.key,
+    required this.email,
+    required this.password,
+    required this.username,
+  });
 
   @override
-  State<UploadImageScreen> createState() => _UploadImageScreenState();
+  State<AddPicture> createState() => _AddPictureState();
 }
 
-class _UploadImageScreenState extends State<UploadImageScreen> {
+class _AddPictureState extends State<AddPicture> {
   Uint8List? _image;
 
-  Future<void> _selectImage(ImageSource source) async {
+  void selectImageFromGallery() async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(source: source);
+    final file = await picker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      final bytes = await file.readAsBytes();
+      setState(() => _image = bytes);
+    }
+  }
+
+  void selectImageFromCamera() async {
+    final picker = ImagePicker();
+    final file = await picker.pickImage(source: ImageSource.camera);
     if (file != null) {
       final bytes = await file.readAsBytes();
       setState(() => _image = bytes);
@@ -39,13 +55,14 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                 child: const Text(
                   'Holbegram',
                   style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'serif',
+                    fontFamily: 'Billabong',
+                    fontSize: 50,
                   ),
                 ),
               ),
-              Center(child: Image.asset('assets/images/seahorse.png', height: 80)),
+              Center(
+                child: Image.asset('assets/images/logo.webp', width: 80, height: 60),
+              ),
               const SizedBox(height: 24),
               Text(
                 'Hello, ${widget.username} Welcome to Holbegram.',
@@ -72,13 +89,13 @@ class _UploadImageScreenState extends State<UploadImageScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () => _selectImage(ImageSource.gallery),
-                    icon: const Icon(Icons.image_outlined, size: 36),
+                    onPressed: selectImageFromGallery,
+                    icon: const Icon(Icons.image_outlined, size: 36, color: Color(0xFFE63946)),
                   ),
                   const SizedBox(width: 32),
                   IconButton(
-                    onPressed: () => _selectImage(ImageSource.camera),
-                    icon: const Icon(Icons.camera_alt_outlined, size: 36),
+                    onPressed: selectImageFromCamera,
+                    icon: const Icon(Icons.camera_alt_outlined, size: 36, color: Color(0xFFE63946)),
                   ),
                 ],
               ),
