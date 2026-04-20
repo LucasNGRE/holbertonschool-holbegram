@@ -7,11 +7,11 @@ class AuthMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<model.User> getUserDetails() async {
+  Future<model.Users> getUserDetails() async {
     User currentUser = _auth.currentUser!;
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
-    return model.User.fromSnap(snap);
+    return model.Users.fromSnap(snap);
   }
 
   Future<String> signUpUser({
@@ -31,7 +31,7 @@ class AuthMethods {
 
         String photoUrl = 'https://i.stack.imgur.com/l60Hf.png';
 
-        model.User user = model.User(
+        model.Users user = model.Users(
           uid: cred.user!.uid,
           email: email,
           username: username,
@@ -39,6 +39,9 @@ class AuthMethods {
           photoUrl: photoUrl,
           followers: [],
           following: [],
+          posts: [],
+          saved: [],
+          searchKey: username[0],
         );
 
         await _firestore
