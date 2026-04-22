@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/text_field.dart';
 import '../methods/auth_methods.dart';
 import 'signup_screen.dart';
-import 'home_screen.dart';
+import 'home.dart';
 class LoginScreen extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => const HomeScreen()),
+                            MaterialPageRoute(builder: (_) => const Home()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
