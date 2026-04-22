@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../methods/auth_methods.dart';
 import 'home_screen.dart';
 
 class AddPicture extends StatefulWidget {
@@ -103,10 +104,28 @@ class _AddPictureState extends State<AddPicture> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  ),
+                  onPressed: () async {
+                    String res = await AuthMethode().signUpUser(
+                      email: widget.email,
+                      password: widget.password,
+                      username: widget.username,
+                      file: _image,
+                    );
+                    if (!context.mounted) return;
+                    if (res == 'success') {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('success')),
+                      );
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(res)),
+                      );
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE63946),
                     shape: RoundedRectangleBorder(
