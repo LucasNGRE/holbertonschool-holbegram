@@ -17,7 +17,9 @@ class StorageMethods {
     var request = http.MultipartRequest('POST', uri);
     request.fields['upload_preset'] = cloudinaryPreset;
     request.fields['folder'] = childName;
-    request.fields['public_id'] = isPost ? uniqueId : '';
+    if (isPost) {
+      request.fields['public_id'] = uniqueId;
+    }
 
     var multipartFile = http.MultipartFile.fromBytes('file', file, filename: '$uniqueId.jpg');
     request.files.add(multipartFile);

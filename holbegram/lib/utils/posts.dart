@@ -38,7 +38,7 @@ class _PostsState extends State<Posts> {
           savedList = (userSnap.data!.data() as Map<String, dynamic>)['saved'] ?? [];
         }
         return StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+          stream: FirebaseFirestore.instance.collection('posts').orderBy('datePublished', descending: true).snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
               return Center(child: Text('Error ${snapshot.error}'));
@@ -74,10 +74,12 @@ class _PostsState extends State<Posts> {
                                     height: 40,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: NetworkImage(doc['profImage'] ?? ''),
-                                        fit: BoxFit.cover,
-                                      ),
+                                      image: (doc['profImage'] != null && doc['profImage'].isNotEmpty)
+                                        ? DecorationImage(
+                                            image: NetworkImage(doc['profImage']),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
                                     ),
                                   ),
                                 ),
@@ -109,10 +111,13 @@ class _PostsState extends State<Posts> {
                             height: 350,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(25),
-                              image: DecorationImage(
-                                image: NetworkImage(doc['postUrl'] ?? ''),
-                                fit: BoxFit.cover,
-                              ),
+                              color: Colors.grey[200],
+                              image: (doc['postUrl'] != null && doc['postUrl'].isNotEmpty)
+                                  ? DecorationImage(
+                                      image: NetworkImage(doc['postUrl']),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
                             ),
                           ),
                           Row(
@@ -121,8 +126,28 @@ class _PostsState extends State<Posts> {
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.favorite_border),
-                                    onPressed: () {},
+                                    icon: Icon(
+                                      (doc['likes'] as List).contains(currentUid)
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: (doc['likes'] as List).contains(currentUid)
+                                          ? Colors.red
+                                          : Colors.black,
+                                    ),
+                                    onPressed: () async {
+                                      final postRef = FirebaseFirestore.instance
+                                          .collection('posts')
+                                          .doc(doc['postId']);
+                                      if ((doc['likes'] as List).contains(currentUid)) {
+                                        await postRef.update({
+                                          'likes': FieldValue.arrayRemove([currentUid]),
+                                        });
+                                      } else {
+                                        await postRef.update({
+                                          'likes': FieldValue.arrayUnion([currentUid]),
+                                        });
+                                      }
+                                    },
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.chat_bubble_outline),

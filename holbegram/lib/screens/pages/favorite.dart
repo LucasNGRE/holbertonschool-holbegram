@@ -23,56 +23,40 @@ class _FavoriteState extends State<Favorite> {
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Favorites',
-                style: TextStyle(
-                  fontFamily: 'Billabong',
-                  fontSize: 36,
-                ),
+                style: TextStyle(fontFamily: 'Billabong', fontSize: 36),
               ),
             ),
             Expanded(
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(currentUid)
+                    .collection('posts')
+                    .where('likes', arrayContains: currentUid)
                     .snapshots(),
-                builder: (context, AsyncSnapshot<DocumentSnapshot> userSnap) {
-                  if (!userSnap.hasData) {
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  List savedIds = (userSnap.data!.data()
-                      as Map<String, dynamic>)['saved'] ?? [];
-
-                  if (savedIds.isEmpty) {
-                    return const Center(child: Text('No saved posts yet.'));
+                  var posts = snapshot.data!.docs;
+                  if (posts.isEmpty) {
+                    return const Center(child: Text('No liked posts yet.'));
                   }
-
-                  return StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('posts')
-                        .where('postId', whereIn: savedIds)
-                        .snapshots(),
-                    builder: (context, AsyncSnapshot<QuerySnapshot> postSnap) {
-                      if (!postSnap.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      var posts = postSnap.data!.docs;
-                      return ListView.builder(
-                        itemCount: posts.length,
-                        itemBuilder: (context, index) {
-                          var doc = posts[index].data() as Map<String, dynamic>;
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 8),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                doc['postUrl'] ?? '',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                            ),
-                          );
-                        },
+                  return ListView.builder(
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      var doc = posts[index].data() as Map<String, dynamic>;
+                      final url = doc['postUrl'] ?? '';
+                      if (url.isEmpty) return const SizedBox();
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            url,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
                       );
                     },
                   );

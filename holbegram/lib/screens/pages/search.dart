@@ -61,10 +61,9 @@ class _SearchState extends State<Search> {
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
                       var doc = posts[index].data() as Map<String, dynamic>;
-                      return Image.network(
-                        doc['postUrl'] ?? '',
-                        fit: BoxFit.cover,
-                      );
+                      final url = doc['postUrl'] ?? '';
+                      if (url.isEmpty) return const SizedBox();
+                      return Image.network(url, fit: BoxFit.cover);
                     },
                   );
                 },
